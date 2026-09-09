@@ -4,6 +4,7 @@ import { AuthProvider, useAuth } from './auth/AuthProvider';
 import { Login } from './pages/Login';
 import { DashboardLayout } from './layouts/DashboardLayout';
 import { AdminDashboard } from './pages/dashboards/AdminDashboard';
+import { PatientsList } from './pages/patients/PatientsList';
 
 const ProtectedRoute = ({ children, allowedRoles }: { children: React.ReactNode, allowedRoles?: string[] }) => {
   const { isAuthenticated, user } = useAuth();
@@ -24,7 +25,7 @@ function AppRoutes() {
       <Route element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
         <Route path="/dashboard" element={<AdminDashboard />} />
         {/* Placeholder Routes for later */}
-        <Route path="/patients" element={<div className="p-6">Patients Module Coming Soon</div>} />
+        <Route path="/patients" element={<PatientsList />} />
         <Route path="/appointments" element={<div className="p-6">Appointments Module Coming Soon</div>} />
         <Route path="/records" element={<div className="p-6">Medical Records Module Coming Soon</div>} />
         <Route path="/admissions" element={<div className="p-6">Admissions & Beds Module Coming Soon</div>} />
