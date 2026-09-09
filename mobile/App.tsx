@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { LoginScreen } from './src/screens/LoginScreen';
 import { PatientDashboardScreen } from './src/screens/PatientDashboardScreen';
 import { AppointmentsScreen } from './src/screens/AppointmentsScreen';
+import { DocumentUploadScreen } from './src/screens/DocumentUploadScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -13,6 +14,7 @@ export default function App() {
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
         <Stack.Screen name="PatientDashboard" component={PatientDashboardScreen} options={{ title: 'HealthSphere' }} />
         <Stack.Screen name="Appointments" component={AppointmentsScreen} />
+        <Stack.Screen name="DocumentUpload" component={DocumentUploadScreen} options={{ title: "Upload Vault" }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

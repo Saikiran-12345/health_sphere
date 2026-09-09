@@ -13,7 +13,7 @@ export const PatientDashboardScreen = ({ navigation }: any) => {
         <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('Appointments')}>
           <Text style={styles.cardTitle}>📅 Appointments</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.card}>
+        <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('DocumentUpload')}>
           <Text style={styles.cardTitle}>💊 Medications</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.card}>
