@@ -45,3 +45,5 @@ app.include_router(analytics.router)
 
 app.include_router(audit.router)
 app.include_router(fhir.router)
+
+app.include_router(payments.router)

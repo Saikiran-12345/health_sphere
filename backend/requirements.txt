@@ -16,3 +16,6 @@ pytest
 httpx
 
 websockets
+
+stripe
+reportlab
