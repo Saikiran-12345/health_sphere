@@ -21,3 +21,5 @@ from app.models.assets import Asset, MaintenanceLog
 from app.models.dietary import DietPlan, MealOrder
 
 from app.models.notifications import NotificationLog
+
+from app.models.audit import AuditLog
