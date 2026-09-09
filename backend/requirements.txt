@@ -26,3 +26,6 @@ redis
 boto3
 
 twilio
+
+opencv-python-headless
+numpy
