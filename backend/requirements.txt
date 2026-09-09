@@ -31,3 +31,7 @@ opencv-python-headless
 numpy
 
 webauthn
+
+pytest
+httpx
+pytest-asyncio
