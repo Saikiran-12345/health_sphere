@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Search, Plus } from 'lucide-react';
-import { useHospitalData, Doctor } from '../../context/DataContext';
+import { useHospitalData, type Doctor } from '../../context/DataContext';
 
 export const DoctorsList = () => {
   const { doctors, addDoctor } = useHospitalData();
