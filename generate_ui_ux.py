@@ -1,14 +1,72 @@
+﻿import os
+
+def create_file(path, content):
+    dir_name = os.path.dirname(path)
+    if dir_name:
+        os.makedirs(dir_name, exist_ok=True)
+    with open(path, 'w', encoding='utf-8') as f:
+        f.write(content.strip() + '\n')
+
+# 1. Update Frontend Package to include Framer Motion
+path_pkg = "frontend/package.json"
+with open(path_pkg, "r") as f:
+    pkg_content = f.read()
+
+if "framer-motion" not in pkg_content:
+    pkg_content = pkg_content.replace(
+        '"react-router-dom": "^6.22.3"',
+        '"react-router-dom": "^6.22.3",\n    "framer-motion": "^11.0.8",\n    "clsx": "^2.1.0",\n    "tailwind-merge": "^2.2.1"'
+    )
+    with open(path_pkg, "w") as f:
+        f.write(pkg_content)
+
+# 2. Utility for class merging (very common in real react codebases)
+create_file('frontend/src/utils/cn.ts', """
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+""")
+
+# 3. Framer Motion Animated Page Wrapper
+create_file('frontend/src/components/AnimatedPage.tsx', """
+import React from 'react';
+import { motion } from 'framer-motion';
+
+const animations = {
+  initial: { opacity: 0, y: 15 },
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -15 },
+};
+
+export const AnimatedPage = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <motion.div
+      variants={animations}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      transition={{ duration: 0.3, ease: "easeOut" }}
+      className="h-full w-full"
+    >
+      {children}
+    </motion.div>
+  );
+};
+""")
+
+# 4. Polish the Dashboard Layout (Add User Menu, Search, Smooth styling)
+create_file('frontend/src/layouts/DashboardLayout.tsx', """
 import React, { useState } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { Activity, Users, Settings, LogOut, Menu, X, Bed, Home, Package, CreditCard, Truck, Video, Bell, Search } from 'lucide-react';
 import { useAuth } from '../auth/AuthProvider';
-import { useTheme } from '../theme/ThemeProvider';
-import { Moon, Sun } from 'lucide-react';
 import { AnimatedPage } from '../components/AnimatedPage';
 
 export const DashboardLayout: React.FC = () => {
   const { user, logout } = useAuth();
-  const { theme, setTheme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -77,14 +135,6 @@ export const DashboardLayout: React.FC = () => {
           </div>
           
           <div className="flex items-center gap-6">
-            
-            <button 
-              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
-            >
-              {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
-            </button>
-    
             <button className="relative text-slate-400 hover:text-slate-600 transition-colors">
               <Bell size={20} />
               <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></span>
@@ -112,3 +162,28 @@ export const DashboardLayout: React.FC = () => {
     </div>
   );
 };
+""")
+
+# 5. Fix App.tsx routing so all pages are rendered under the DashboardLayout path correctly
+path_app = "frontend/src/App.tsx"
+with open(path_app, "r") as f:
+    app_content = f.read()
+
+# We need to ensure nested routes are correctly using the layout.
+app_content = app_content.replace(
+    '<Route path="/patients" element={<PatientsList />} />',
+    '<Route path="patients" element={<PatientsList />} />'
+)
+app_content = app_content.replace('<Route path="/analytics" element={<AIAnalytics />} />', '<Route path="analytics" element={<AIAnalytics />} />')
+app_content = app_content.replace('<Route path="/pharmacy" element={<PharmacyInventory />} />', '<Route path="pharmacy" element={<PharmacyInventory />} />')
+app_content = app_content.replace('<Route path="/appointments" element={<AppointmentsList />} />', '<Route path="appointments" element={<AppointmentsList />} />')
+app_content = app_content.replace('<Route path="/records" element={<MedicalRecords />} />', '<Route path="records" element={<MedicalRecords />} />')
+app_content = app_content.replace('<Route path="/admissions" element={<BedManagement />} />', '<Route path="admissions" element={<BedManagement />} />')
+app_content = app_content.replace('<Route path="/billing" element={<BillingDashboard />} />', '<Route path="billing" element={<BillingDashboard />} />')
+app_content = app_content.replace('<Route path="/ambulance" element={<AmbulanceDispatch />} />', '<Route path="ambulance" element={<AmbulanceDispatch />} />')
+app_content = app_content.replace('<Route path="/telemedicine" element={<TelemedicineDashboard />} />', '<Route path="telemedicine" element={<TelemedicineDashboard />} />')
+
+with open(path_app, "w") as f:
+    f.write(app_content)
+
+print("UI/UX Overhaul completed.")

@@ -65,10 +65,12 @@ function AppRoutes() {
 
 export default function App() {
   return (
+    <ThemeProvider defaultTheme="light" storageKey="healthsphere-theme">
     <AuthProvider>
       <BrowserRouter>
         <AppRoutes />
       </BrowserRouter>
     </AuthProvider>
+    </ThemeProvider>
   );
 }

@@ -22,3 +22,5 @@ reportlab
 
 celery
 redis
+
+boto3
