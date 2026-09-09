@@ -263,6 +263,7 @@ export const Login = () => {
               <input 
                 className="form-control" 
                 type="email" 
+                placeholder="Email"
                 value={email} 
                 onChange={e => setEmail(e.target.value)} 
                 required 
@@ -278,6 +279,7 @@ export const Login = () => {
                 <input 
                   className="form-control" 
                   type={showPassword ? 'text' : 'password'} 
+                  placeholder="Password"
                   value={password} 
                   onChange={e => setPassword(e.target.value)} 
                   required 

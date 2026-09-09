@@ -21,17 +21,39 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
+const getLocalStorageItem = (key: string) => {
+  try {
+    return typeof window !== 'undefined' && window.localStorage && typeof window.localStorage.getItem === 'function'
+      ? window.localStorage.getItem(key)
+      : null;
+  } catch {
+    return null;
+  }
+};
+
+const setLocalStorageItem = (key: string, val: string) => {
+  try {
+    if (typeof window !== 'undefined' && window.localStorage && typeof window.localStorage.setItem === 'function') {
+      window.localStorage.setItem(key, val);
+    }
+  } catch {}
+};
+
+const removeLocalStorageItem = (key: string) => {
+  try {
+    if (typeof window !== 'undefined' && window.localStorage && typeof window.localStorage.removeItem === 'function') {
+      window.localStorage.removeItem(key);
+    }
+  } catch {}
+};
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(() => {
-    try {
-      const savedUser = localStorage.getItem('user');
-      return savedUser ? JSON.parse(savedUser) : null;
-    } catch {
-      return null;
-    }
+    const savedUser = getLocalStorageItem('user');
+    return savedUser ? JSON.parse(savedUser) : null;
   });
 
-  const [token, setToken] = useState<string | null>(() => localStorage.getItem('token'));
+  const [token, setToken] = useState<string | null>(() => getLocalStorageItem('token'));
 
   useEffect(() => {
     if (token) {
@@ -45,15 +67,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const t = newToken || `demo-jwt-token-${userData.id.toLowerCase()}`;
     setToken(t);
     setUser(userData);
-    localStorage.setItem('token', t);
-    localStorage.setItem('user', JSON.stringify(userData));
+    setLocalStorageItem('token', t);
+    setLocalStorageItem('user', JSON.stringify(userData));
   };
 
   const logout = () => {
     setToken(null);
     setUser(null);
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    removeLocalStorageItem('token');
+    removeLocalStorageItem('user');
   };
 
   return (
