@@ -42,19 +42,19 @@ function AppRoutes() {
       <Route element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
         <Route path="/dashboard" element={<AdminDashboard />} />
         {/* Placeholder Routes for later */}
-        <Route path="/patients" element={<PatientsList />} />
-        <Route path="/appointments" element={<AppointmentsList />} />
-        <Route path="/records" element={<MedicalRecords />} />
-        <Route path="/admissions" element={<BedManagement />} />
-        <Route path="/analytics" element={<AIAnalytics />} />
+        <Route path="patients" element={<PatientsList />} />
+        <Route path="appointments" element={<AppointmentsList />} />
+        <Route path="records" element={<MedicalRecords />} />
+        <Route path="admissions" element={<BedManagement />} />
+        <Route path="analytics" element={<AIAnalytics />} />
         <Route path="/settings" element={<div className="p-6">Settings Module Coming Soon</div>} />
-        <Route path="/pharmacy" element={<PharmacyInventory />} />
+        <Route path="pharmacy" element={<PharmacyInventory />} />
       
-        <Route path="/billing" element={<BillingDashboard />} />
-        <Route path="/ambulance" element={<AmbulanceDispatch />} />
+        <Route path="billing" element={<BillingDashboard />} />
+        <Route path="ambulance" element={<AmbulanceDispatch />} />
 
       
-        <Route path="/telemedicine" element={<TelemedicineDashboard />} />
+        <Route path="telemedicine" element={<TelemedicineDashboard />} />
 
       </Route>
       
