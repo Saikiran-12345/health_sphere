@@ -8,3 +8,6 @@ alembic
 
 passlib[bcrypt]
 python-jose[cryptography]
+
+faker
+openpyxl
