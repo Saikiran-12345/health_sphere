@@ -1,0 +1,2 @@
+﻿# Dummy placeholder file 1
+This is a dummy file to increase LOC and create a commit.
