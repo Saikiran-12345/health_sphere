@@ -13,6 +13,10 @@ import { BedManagement } from './pages/admissions/BedManagement';
 import { AIAnalytics } from './pages/analytics/AIAnalytics';
 import { PharmacyInventory } from './pages/pharmacy/PharmacyInventory';
 
+import { BillingDashboard } from './pages/billing/BillingDashboard';
+import { AmbulanceDispatch } from './pages/ambulance/AmbulanceDispatch';
+
+
 
 
 const ProtectedRoute = ({ children, allowedRoles }: { children: React.ReactNode, allowedRoles?: string[] }) => {
@@ -41,6 +45,10 @@ function AppRoutes() {
         <Route path="/analytics" element={<AIAnalytics />} />
         <Route path="/settings" element={<div className="p-6">Settings Module Coming Soon</div>} />
         <Route path="/pharmacy" element={<PharmacyInventory />} />
+      
+        <Route path="/billing" element={<BillingDashboard />} />
+        <Route path="/ambulance" element={<AmbulanceDispatch />} />
+
       </Route>
       
       <Route path="*" element={<div className="p-12 text-center text-2xl font-bold">404 Not Found</div>} />
