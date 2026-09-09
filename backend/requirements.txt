@@ -29,3 +29,5 @@ twilio
 
 opencv-python-headless
 numpy
+
+webauthn

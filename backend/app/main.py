@@ -52,3 +52,5 @@ app.include_router(payments.router)
 app.include_router(iot.router)
 
 app.include_router(diagnostics.router)
+
+app.include_router(webauthn.router)
