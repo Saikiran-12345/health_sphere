@@ -11,3 +11,4 @@ Connected Care. Smarter Healthcare. Better Outcomes.
 (To be updated as development progresses)
 Update 1 - Minor improvement or bug fix description 1
 Update 2 - Minor improvement or bug fix description 2
+Update 3 - Minor improvement or bug fix description 3
