@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../auth/AuthProvider';
 import { useNavigate, Outlet, Link } from 'react-router-dom';
-import { Activity, Calendar, Users, FileText, Settings, LogOut, Menu, X, Bed, Crosshair, Home, Package, CreditCard, Truck } from 'lucide-react';
+import { Activity, Calendar, Users, FileText, Settings, LogOut, Menu, X, Bed, Crosshair, Home, Package, CreditCard, Truck, Video } from 'lucide-react';
 
 export const DashboardLayout: React.FC = () => {
   const { user, logout } = useAuth();
@@ -22,6 +22,7 @@ export const DashboardLayout: React.FC = () => {
     { label: 'Pharmacy', icon: <Package size={20} />, path: '/pharmacy' },
     { label: 'Billing & Invoicing', icon: <CreditCard size={20} />, path: '/billing' },
     { label: 'Ambulance Dispatch', icon: <Truck size={20} />, path: '/ambulance' },
+    { label: 'Telemedicine', icon: <Video size={20} />, path: '/telemedicine' },
     { label: 'AI Risk Analytics', icon: <Activity size={20} />, path: '/analytics' },
     { label: 'Settings', icon: <Settings size={20} />, path: '/settings' }
   ];

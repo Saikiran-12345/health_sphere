@@ -16,6 +16,9 @@ import { PharmacyInventory } from './pages/pharmacy/PharmacyInventory';
 import { BillingDashboard } from './pages/billing/BillingDashboard';
 import { AmbulanceDispatch } from './pages/ambulance/AmbulanceDispatch';
 
+import { TelemedicineDashboard } from './pages/telemedicine/TelemedicineDashboard';
+
+
 
 
 
@@ -48,6 +51,9 @@ function AppRoutes() {
       
         <Route path="/billing" element={<BillingDashboard />} />
         <Route path="/ambulance" element={<AmbulanceDispatch />} />
+
+      
+        <Route path="/telemedicine" element={<TelemedicineDashboard />} />
 
       </Route>
       
