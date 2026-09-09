@@ -1,0 +1,11 @@
+﻿# HEALTHSPHERE
+Connected Care. Smarter Healthcare. Better Outcomes.
+
+## Architecture
+- **Frontend:** React + TypeScript + Vite + TailwindCSS
+- **Backend:** Python + FastAPI + SQLAlchemy
+- **Database:** PostgreSQL
+- **AI/ML:** Python + pandas + scikit-learn
+
+## Setup Instructions
+(To be updated as development progresses)
