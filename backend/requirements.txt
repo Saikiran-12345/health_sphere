@@ -11,3 +11,6 @@ python-jose[cryptography]
 
 faker
 openpyxl
+
+pytest
+httpx
