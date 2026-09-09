@@ -1,5 +1,5 @@
 import React from 'react';
-import { Truck, MapPin, Phone, ShieldCheck, Plus } from 'lucide-react';
+import { Truck, MapPin, Phone, ShieldCheck, Plus, CheckCircle2 } from 'lucide-react';
 
 const fleet = [
   { id: 'AMB-101', driver: 'Raju Sharma', phone: '+91 98765 88881', location: 'MG Road Junction', eta: '4 min', type: 'Advanced Life Support (ALS)', status: 'Dispatched' },
@@ -21,7 +21,7 @@ export const AmbulanceDispatch = () => {
       <div className="dashboard-grid">
         <div className="card-summary"><div className="card-summary-info"><h3>Total Fleet</h3><p>{fleet.length}</p></div><div className="card-summary-icon" style={{ background: '#ffedd5', color: '#ea580c' }}><Truck size={24} /></div></div>
         <div className="card-summary"><div className="card-summary-info"><h3>On Dispatch</h3><p style={{ color: '#dc2626' }}>2</p></div><div className="card-summary-icon" style={{ background: '#fee2e2', color: '#dc2626' }}><MapPin size={24} /></div></div>
-        <div className="card-summary"><div className="card-summary-info"><h3>Standby Available</h3><p style={{ color: '#16a34a' }}>1</p></div><div className="card-summary-icon" style={{ background: '#dcfce7', color: '#16a34a' }}><CheckCircle size={24} /></div></div>
+        <div className="card-summary"><div className="card-summary-info"><h3>Standby Available</h3><p style={{ color: '#16a34a' }}>1</p></div><div className="card-summary-icon" style={{ background: '#dcfce7', color: '#16a34a' }}><CheckCircle2 size={24} /></div></div>
       </div>
 
       <div className="data-table-container">
