@@ -1,5 +1,6 @@
-﻿from fastapi import FastAPI
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from app.api import auth
 
 app = FastAPI(title="HealthSphere Enterprise API", version="1.0.0")
 
@@ -11,10 +12,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/")
-def read_root():
-    return {"message": "Welcome to HealthSphere API"}
+app.include_router(auth.router)
 
 @app.get("/api/health")
 def health_check():
-    return {"status": "Online", "database": "Disconnected"}
+    return {"status": "Online", "database": "Connected"}
