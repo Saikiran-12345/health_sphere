@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api import auth, patients, clinical
+from app.api import auth, patients, clinical, pharmacy, laboratory
 
 app = FastAPI(title="HealthSphere Enterprise API", version="1.0.0")
 
@@ -19,3 +19,6 @@ app.include_router(clinical.router)
 @app.get("/api/health")
 def health_check():
     return {"status": "Online", "database": "Connected"}
+
+app.include_router(pharmacy.router)
+app.include_router(laboratory.router)

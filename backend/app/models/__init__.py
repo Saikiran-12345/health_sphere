@@ -7,3 +7,6 @@ from app.models.staff import Staff
 
 from app.models.appointment import Appointment, AppointmentStatus
 from app.models.medical_record import MedicalRecord, RecordType
+
+from app.models.pharmacy import Medicine, Prescription, PrescriptionItem
+from app.models.laboratory import LabTest, LabOrder
