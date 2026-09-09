@@ -1,62 +1,89 @@
-import React from 'react';
-import { BedDouble, User } from 'lucide-react';
+import React, { useState } from 'react';
+import { Bed, AlertCircle, CheckCircle, Clock, Filter } from 'lucide-react';
 
-export const BedManagement: React.FC = () => {
-  const wards = [
-    {
-      name: 'Intensive Care Unit (ICU)',
-      beds: [
-        { id: 'ICU-1', status: 'OCCUPIED', patient: 'Robert Fox' },
-        { id: 'ICU-2', status: 'OCCUPIED', patient: 'Jane Smith' },
-        { id: 'ICU-3', status: 'AVAILABLE', patient: null },
-        { id: 'ICU-4', status: 'MAINTENANCE', patient: null },
-      ]
-    },
-    {
-      name: 'General Ward A',
-      beds: [
-        { id: 'GEN-1', status: 'AVAILABLE', patient: null },
-        { id: 'GEN-2', status: 'AVAILABLE', patient: null },
-        { id: 'GEN-3', status: 'OCCUPIED', patient: 'Alice Johnson' },
-        { id: 'GEN-4', status: 'AVAILABLE', patient: null },
-      ]
-    }
-  ];
+const wards = [
+  { id: 'icu', name: 'ICU Ward A', total: 12, occupied: 10, color: '#dc2626' },
+  { id: 'general', name: 'General Ward B', total: 30, occupied: 22, color: '#0284c7' },
+  { id: 'peds', name: 'Pediatric Ward C', total: 16, occupied: 9, color: '#8b5cf6' },
+  { id: 'maternity', name: 'Maternity Ward D', total: 14, occupied: 11, color: '#0d9488' }
+];
+
+const bedGrid = [
+  { bedNo: 'ICU-01', patient: 'Vikram Singh', admittedDate: '07 Sep 2026, 14:30', status: 'occupied', critical: true, vitals: 'BP 140/90 • HR 98' },
+  { bedNo: 'ICU-02', patient: 'Deepak Mishra', admittedDate: '08 Sep 2026, 09:15', status: 'occupied', critical: false, vitals: 'BP 120/80 • HR 72' },
+  { bedNo: 'ICU-03', patient: 'Arun Kumar', admittedDate: '09 Sep 2026, 06:45', status: 'occupied', critical: true, vitals: 'BP 155/95 • HR 104' },
+  { bedNo: 'ICU-04', patient: 'Empty', admittedDate: '-', status: 'available', critical: false, vitals: 'Sanitized & Ready' },
+  { bedNo: 'ICU-05', patient: 'Priya Sharma', admittedDate: '08 Sep 2026, 18:20', status: 'occupied', critical: false, vitals: 'BP 118/76 • HR 78' },
+  { bedNo: 'ICU-06', patient: 'Empty', admittedDate: '-', status: 'available', critical: false, vitals: 'Sanitized & Ready' },
+  { bedNo: 'ICU-07', patient: 'Raj Patel', admittedDate: '09 Sep 2026, 01:10', status: 'occupied', critical: false, vitals: 'BP 125/82 • HR 80' },
+  { bedNo: 'ICU-08', patient: 'Empty', admittedDate: '-', status: 'available', critical: false, vitals: 'Sanitized & Ready' },
+];
+
+export const BedManagement = () => {
+  const [selectedWard, setSelectedWard] = useState('icu');
+  const [dateFilter, setDateFilter] = useState('today');
 
   return (
-    <div className="space-y-8">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-gray-800">Bed Management</h2>
-        <div className="flex gap-4 text-sm font-medium text-gray-600">
-          <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-green-500"></span> Available</div>
-          <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-red-500"></span> Occupied</div>
-          <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-yellow-500"></span> Maintenance</div>
+    <div>
+      <div className="page-header">
+        <div className="page-title">
+          <h2>Inpatient Bed & Ward Census</h2>
+          <p>Real-time bed availability matrix, patient admission dates, and live telemetry</p>
+        </div>
+        <div style={{ display: 'flex', gap: '0.75rem' }}>
+          <select className="form-control" style={{ width: 'auto', fontWeight: 600 }} value={dateFilter} onChange={e => setDateFilter(e.target.value)}>
+            <option value="today">Census Date: 09 Sep 2026</option>
+            <option value="yesterday">Census Date: 08 Sep 2026</option>
+          </select>
         </div>
       </div>
 
-      {wards.map((ward, idx) => (
-        <div key={idx} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h3 className="text-lg font-bold text-gray-800 mb-6 border-b pb-2">{ward.name}</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {ward.beds.map(bed => (
-              <div key={bed.id} className={`p-4 rounded-lg border-2 flex flex-col items-center text-center transition-all cursor-pointer hover:shadow-md
-                ${bed.status === 'AVAILABLE' ? 'border-green-200 bg-green-50' : 
-                  bed.status === 'OCCUPIED' ? 'border-red-200 bg-red-50' : 'border-yellow-200 bg-yellow-50'}`}
-              >
-                <BedDouble size={32} className={`mb-3 ${bed.status === 'AVAILABLE' ? 'text-green-600' : bed.status === 'OCCUPIED' ? 'text-red-600' : 'text-yellow-600'}`} />
-                <span className="font-bold text-gray-900">{bed.id}</span>
-                {bed.patient ? (
-                  <div className="mt-2 flex items-center gap-1 text-sm font-medium text-gray-700 bg-white/50 px-2 py-1 rounded">
-                    <User size={14}/> {bed.patient}
-                  </div>
-                ) : (
-                  <div className="mt-2 text-sm font-medium text-gray-500 uppercase tracking-wider">{bed.status}</div>
-                )}
-              </div>
-            ))}
+      <div className="dashboard-grid">
+        {wards.map(w => (
+          <div key={w.id} className="card-summary" style={{ borderLeft: `4px solid ${w.color}`, cursor: 'pointer' }} onClick={() => setSelectedWard(w.id)}>
+            <div className="card-summary-info">
+              <h3>{w.name}</h3>
+              <p>{w.occupied} / {w.total}</p>
+              <span className="badge" style={{ background: `${w.color}20`, color: w.color, marginTop: 4 }}>
+                {Math.round((w.occupied / w.total) * 100)}% Occupied
+              </span>
+            </div>
+            <div className="card-summary-icon" style={{ background: `${w.color}20`, color: w.color }}><Bed size={24} /></div>
           </div>
+        ))}
+      </div>
+
+      <div className="data-table-container">
+        <div className="table-header">
+          <h3>Bed Allocation Matrix — ICU Ward A (Date: 09 Sep 2026)</h3>
+          <span style={{ fontSize: '0.85rem', color: '#16a34a', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4 }}>
+            <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#16a34a' }}></span> Live Vitals Sync Active
+          </span>
         </div>
-      ))}
+        <div style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
+          {bedGrid.map(bed => (
+            <div key={bed.bedNo} style={{
+              padding: '1.25rem', borderRadius: 10,
+              border: bed.status === 'occupied' ? (bed.critical ? '2px solid #ef4444' : '1px solid #bae6fd') : '1px solid #bbf7d0',
+              background: bed.status === 'occupied' ? (bed.critical ? '#fef2f2' : '#f0f9ff') : '#f0fdf4'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                <span style={{ fontWeight: 800, fontSize: '1.1rem', color: '#1e293b' }}>{bed.bedNo}</span>
+                <span className={`badge ${bed.status === 'occupied' ? (bed.critical ? 'badge-critical' : 'badge-primary') : 'badge-stable'}`}>
+                  {bed.status === 'occupied' ? (bed.critical ? 'CRITICAL' : 'OCCUPIED') : 'AVAILABLE'}
+                </span>
+              </div>
+              <div style={{ fontWeight: 700, fontSize: '0.95rem', color: '#0f172a' }}>{bed.patient}</div>
+              <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: 4, display: 'flex', alignItems: 'center', gap: 4 }}>
+                <Clock size={12} /> Admitted: {bed.admittedDate}
+              </div>
+              <div style={{ marginTop: 8, fontSize: '0.8rem', fontWeight: 600, color: bed.critical ? '#dc2626' : '#0369a1', background: 'white', padding: '4px 8px', borderRadius: 4, border: '1px solid #e2e8f0' }}>
+                {bed.vitals}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };

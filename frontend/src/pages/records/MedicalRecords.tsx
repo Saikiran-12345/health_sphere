@@ -1,47 +1,73 @@
 import React, { useState } from 'react';
-import { Search, FileText, Activity, Pill, FlaskConical } from 'lucide-react';
+import { FileText, Download, Eye, Search, Calendar } from 'lucide-react';
 
-export const MedicalRecords: React.FC = () => {
-  const [records] = useState([
-    { id: '1', date: '2026-09-08', type: 'CLINICAL_NOTE', title: 'General Checkup', doctor: 'Dr. Sarah Smith', excerpt: 'Patient presents with mild fever and fatigue...' },
-    { id: '2', date: '2026-09-08', type: 'PRESCRIPTION', title: 'Amoxicillin 500mg', doctor: 'Dr. Sarah Smith', excerpt: 'Take twice daily for 7 days after meals.' },
-    { id: '3', date: '2026-09-01', type: 'LAB_RESULT', title: 'Complete Blood Count', doctor: 'Dr. Michael Chen', excerpt: 'All parameters within normal limits. Hemoglobin 14.2 g/dL.' },
-  ]);
+const records = [
+  { id: 'REC-9001', patient: 'Vikram Singh', type: '12-Lead ECG Report', doctor: 'Dr. Saikiran Reddy', date: '09 Sep 2026, 08:30 AM', status: 'Abnormal (ST Elevation)', format: 'PDF' },
+  { id: 'REC-9002', patient: 'Arun Kumar', type: 'Complete Blood Count (CBC)', doctor: 'Dr. Amit Shah', date: '09 Sep 2026, 07:15 AM', status: 'Normal', format: 'PDF' },
+  { id: 'REC-9003', patient: 'Priya Sharma', type: 'Obstetric Ultrasound Scan', doctor: 'Dr. Neha Gupta', date: '08 Sep 2026, 16:45 PM', status: 'Normal (Fetal HR 142)', format: 'DICOM/PDF' },
+  { id: 'REC-9004', patient: 'Deepak Mishra', type: 'Renal Function Panel (KFT)', doctor: 'Dr. Amit Shah', date: '08 Sep 2026, 11:20 AM', status: 'Elevated Creatinine', format: 'PDF' },
+  { id: 'REC-9005', patient: 'Latha Krishnan', type: 'Chest X-Ray (PA View)', doctor: 'Dr. Priya Nair', date: '07 Sep 2026, 14:10 PM', status: 'Clear Lung Fields', format: 'DICOM' },
+];
 
-  const getIcon = (type: string) => {
-    switch (type) {
-      case 'CLINICAL_NOTE': return <FileText className="text-blue-500" />;
-      case 'PRESCRIPTION': return <Pill className="text-green-500" />;
-      case 'LAB_RESULT': return <FlaskConical className="text-purple-500" />;
-      default: return <Activity className="text-gray-500" />;
-    }
-  };
+export const MedicalRecords = () => {
+  const [search, setSearch] = useState('');
+  const [dateFilter, setDateFilter] = useState('all');
+
+  const filtered = records.filter(r => r.patient.toLowerCase().includes(search.toLowerCase()) || r.type.toLowerCase().includes(search.toLowerCase()));
 
   return (
-    <div className="h-full flex flex-col bg-white rounded-lg shadow-sm">
-      <div className="p-6 border-b border-gray-200">
-        <h2 className="text-2xl font-bold text-gray-800">Electronic Medical Records (EMR)</h2>
-        <p className="text-gray-500 mt-1">Search and manage clinical documentation</p>
-      </div>
-      
-      <div className="p-6 flex-1 bg-gray-50 overflow-auto">
-        <div className="max-w-4xl mx-auto relative space-y-8 before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-slate-300 before:to-transparent">
-          {records.map((record, idx) => (
-            <div key={record.id} className={`relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active`}>
-              <div className="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-white shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
-                {getIcon(record.type)}
-              </div>
-              <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-bold text-slate-900">{record.title}</span>
-                  <time className="text-sm font-medium text-slate-500">{record.date}</time>
-                </div>
-                <div className="text-sm text-slate-500 mb-2">{record.doctor}</div>
-                <p className="text-slate-600">{record.excerpt}</p>
-              </div>
-            </div>
-          ))}
+    <div>
+      <div className="page-header">
+        <div className="page-title">
+          <h2>Electronic Health Records & Lab Telemetry</h2>
+          <p>Inspect diagnostic lab reports, imaging scans, and historical patient records</p>
         </div>
+        <div style={{ display: 'flex', gap: '0.75rem' }}>
+          <select className="form-control" style={{ width: 'auto', fontWeight: 600 }} value={dateFilter} onChange={e => setDateFilter(e.target.value)}>
+            <option value="all">Date Range: All Records</option>
+            <option value="today">Today (09 Sep 2026)</option>
+            <option value="week">Past 7 Days</option>
+          </select>
+        </div>
+      </div>
+
+      <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem' }}>
+        <div style={{ flex: 1, position: 'relative' }}>
+          <Search size={16} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+          <input className="form-control" style={{ paddingLeft: '2.5rem' }} placeholder="Search records by patient name or lab report type..." value={search} onChange={e => setSearch(e.target.value)} />
+        </div>
+      </div>
+
+      <div className="data-table-container">
+        <div className="table-header"><h3>Diagnostic Lab & Imaging Reports ({filtered.length})</h3></div>
+        <table className="data-table">
+          <thead><tr><th>Record ID</th><th>Patient Name</th><th>Report Type</th><th>Ordering Doctor</th><th>Test Date & Time</th><th>Result Status</th><th>Download</th></tr></thead>
+          <tbody>
+            {filtered.map(r => (
+              <tr key={r.id}>
+                <td style={{ fontWeight: 600, color: 'var(--primary-color)' }}>{r.id}</td>
+                <td style={{ fontWeight: 700 }}>{r.patient}</td>
+                <td>{r.type}</td>
+                <td style={{ color: 'var(--text-muted)' }}>{r.doctor}</td>
+                <td style={{ fontWeight: 500, color: '#334155' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <Calendar size={13} color="var(--primary-color)" /> {r.date}
+                  </div>
+                </td>
+                <td>
+                  <span className={`badge ${r.status.includes('Abnormal') || r.status.includes('Elevated') ? 'badge-critical' : 'badge-stable'}`}>
+                    {r.status}
+                  </span>
+                </td>
+                <td>
+                  <button className="btn btn-outline" style={{ padding: '4px 8px', fontSize: '0.8rem' }}>
+                    <Download size={14} /> {r.format}
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
