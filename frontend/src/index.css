@@ -731,3 +731,121 @@ body {
     margin-bottom: 0.5rem;
   }
 }
+
+
+/* VIBRANT & SMOOTH THEME OVERRIDES 2026 */
+:root {
+  --primary-color: #0284c7;
+  --primary-gradient: linear-gradient(135deg, #0284c7 0%, #2563eb 50%, #4f46e5 100%);
+  --accent-cyan: #06b6d4;
+  --accent-emerald: #10b981;
+  --accent-amber: #f59e0b;
+  --accent-rose: #f43f5e;
+  --accent-purple: #8b5cf6;
+  
+  --shadow-smooth: 0 10px 30px -5px rgba(2, 132, 199, 0.12), 0 4px 12px -2px rgba(15, 23, 42, 0.05);
+  --shadow-hover: 0 20px 35px -5px rgba(2, 132, 199, 0.2), 0 10px 15px -5px rgba(15, 23, 42, 0.08);
+}
+
+/* Smooth Transitions for All Cards and Buttons */
+.card-summary, .data-table-container, .btn, .badge, input, select {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Smooth Card Hover Elevation & Glow */
+.card-summary:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: var(--shadow-hover) !important;
+  border-color: #cbd5e1 !important;
+}
+
+/* Vibrant Summary Cards Accent Line */
+.card-summary {
+  position: relative !important;
+  overflow: hidden !important;
+  border: 1px solid #e2e8f0 !important;
+  background: #ffffff !important;
+  border-radius: 14px !important;
+  box-shadow: var(--shadow-smooth) !important;
+}
+
+.card-summary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--primary-gradient);
+}
+
+/* Vibrant Badges */
+.badge {
+  font-weight: 700 !important;
+  letter-spacing: 0.02em !important;
+  border-radius: 20px !important;
+  padding: 0.3rem 0.75rem !important;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06) !important;
+}
+
+.badge-completed, .badge-stable {
+  background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%) !important;
+  color: #15803d !important;
+  border: 1px solid #86efac !important;
+}
+
+.badge-critical {
+  background: linear-gradient(135deg, #ffe4e6 0%, #fecdd3 100%) !important;
+  color: #be123c !important;
+  border: 1px solid #fda4af !important;
+}
+
+.badge-primary, .badge-inqueue {
+  background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%) !important;
+  color: #0369a1 !important;
+  border: 1px solid #7dd3fc !important;
+}
+
+/* Vibrant Buttons with Smooth Gradient Drop Shadow */
+.btn-primary {
+  background: var(--primary-gradient) !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35) !important;
+  font-weight: 800 !important;
+  border-radius: 10px !important;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(2, 132, 199, 0.5) !important;
+  filter: brightness(1.05);
+}
+
+/* Glassmorphism Table Header */
+.data-table-container {
+  border-radius: 14px !important;
+  box-shadow: var(--shadow-smooth) !important;
+  border: 1px solid #e2e8f0 !important;
+  background: #ffffff !important;
+  overflow: hidden !important;
+}
+
+.table-header {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%) !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  padding: 1.25rem 1.5rem !important;
+}
+
+.data-table th {
+  background: #f1f5f9 !important;
+  color: #475569 !important;
+  font-weight: 800 !important;
+  text-transform: uppercase !important;
+  font-size: 0.75rem !important;
+  letter-spacing: 0.05em !important;
+}
+
+.data-table tr:hover td {
+  background: #f0f9ff !important;
+}
