@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { 
   Activity, Users, Settings, LogOut, Menu, X, Bed, Home, Package, CreditCard, 
-  Truck, Video, Bell, Search, Stethoscope, Calendar, FileText, ShieldCheck, ChevronRight, User
+  Truck, Video, Bell, Search, Stethoscope, Calendar, FileText, ShieldCheck, Lock, ArrowLeft
 } from 'lucide-react';
 import { useAuth } from '../auth/AuthProvider';
 
@@ -10,7 +10,6 @@ interface MenuItem {
   label: string;
   icon: React.ReactNode;
   path: string;
-  roles?: string[];
   badge?: string;
 }
 
@@ -36,31 +35,44 @@ export const DashboardLayout: React.FC = () => {
     { label: 'System Settings', icon: <Settings size={20} />, path: '/dashboard/settings' },
   ];
 
-  // Role-Based Navigation Filtering
   const userRole = user?.role || 'ADMIN';
 
-  const menuItems = allMenuItems.filter(item => {
-    if (userRole === 'ADMIN') return true;
-    if (item.path === '/dashboard') return true;
-    if (userRole === 'DOCTOR') return ['/dashboard/doctors', '/dashboard/patients', '/dashboard/appointments', '/dashboard/records', '/dashboard/telemedicine', '/dashboard/analytics'].includes(item.path);
-    if (userRole === 'NURSE_ICU') return ['/dashboard/patients', '/dashboard/admissions', '/dashboard/records', '/dashboard/analytics'].includes(item.path);
-    if (userRole === 'PHARMACIST') return ['/dashboard/pharmacy', '/dashboard/patients'].includes(item.path);
-    if (userRole === 'FINANCE') return ['/dashboard/billing', '/dashboard/patients'].includes(item.path);
-    if (userRole === 'DISPATCHER') return ['/dashboard/ambulance', '/dashboard/patients'].includes(item.path);
-    if (userRole === 'LAB_TECH') return ['/dashboard/analytics', '/dashboard/records', '/dashboard/patients'].includes(item.path);
-    return true;
-  });
+  // Allowed Paths per Role
+  const getAllowedPaths = (role: string) => {
+    switch (role) {
+      case 'ADMIN': 
+        return allMenuItems.map(m => m.path);
+      case 'DOCTOR': 
+        return ['/dashboard', '/dashboard/doctors', '/dashboard/patients', '/dashboard/appointments', '/dashboard/records', '/dashboard/telemedicine', '/dashboard/analytics'];
+      case 'NURSE_ICU': 
+        return ['/dashboard', '/dashboard/admissions', '/dashboard/patients', '/dashboard/records', '/dashboard/analytics'];
+      case 'PHARMACIST': 
+        return ['/dashboard', '/dashboard/pharmacy', '/dashboard/patients'];
+      case 'FINANCE': 
+        return ['/dashboard', '/dashboard/billing', '/dashboard/patients'];
+      case 'DISPATCHER': 
+        return ['/dashboard', '/dashboard/ambulance', '/dashboard/patients'];
+      case 'LAB_TECH': 
+        return ['/dashboard', '/dashboard/analytics', '/dashboard/records', '/dashboard/patients'];
+      default: 
+        return ['/dashboard'];
+    }
+  };
+
+  const allowedPaths = getAllowedPaths(userRole);
+  const menuItems = allMenuItems.filter(item => allowedPaths.includes(item.path));
+  const isCurrentPathAllowed = allowedPaths.includes(location.pathname);
 
   const getRoleColor = (role: string) => {
     switch (role) {
-      case 'ADMIN': return { bg: '#e0f2fe', color: '#0284c7', label: 'Hospital Admin' };
-      case 'DOCTOR': return { bg: '#ccfbf1', color: '#0d9488', label: 'Cardiology Specialist' };
-      case 'NURSE_ICU': return { bg: '#fee2e2', color: '#dc2626', label: 'ICU Charge Nurse' };
-      case 'PHARMACIST': return { bg: '#fef3c7', color: '#d97706', label: 'Pharmacy Manager' };
-      case 'FINANCE': return { bg: '#e0e7ff', color: '#4f46e5', label: 'Finance Controller' };
-      case 'DISPATCHER': return { bg: '#ffedd5', color: '#ea580c', label: 'Fleet Controller' };
-      case 'LAB_TECH': return { bg: '#ede9fe', color: '#8b5cf6', label: 'Lab Diagnostics' };
-      default: return { bg: '#e0f2fe', color: '#0284c7', label: role };
+      case 'ADMIN': return { bg: '#e0f2fe', color: '#0284c7', label: 'Hospital Admin', home: '/dashboard' };
+      case 'DOCTOR': return { bg: '#ccfbf1', color: '#0d9488', label: 'Cardiology Specialist', home: '/dashboard/doctors' };
+      case 'NURSE_ICU': return { bg: '#fee2e2', color: '#dc2626', label: 'ICU Charge Nurse', home: '/dashboard/admissions' };
+      case 'PHARMACIST': return { bg: '#fef3c7', color: '#d97706', label: 'Pharmacy Manager', home: '/dashboard/pharmacy' };
+      case 'FINANCE': return { bg: '#e0e7ff', color: '#4f46e5', label: 'Finance Controller', home: '/dashboard/billing' };
+      case 'DISPATCHER': return { bg: '#ffedd5', color: '#ea580c', label: 'Fleet Controller', home: '/dashboard/ambulance' };
+      case 'LAB_TECH': return { bg: '#ede9fe', color: '#8b5cf6', label: 'Lab Diagnostics', home: '/dashboard/analytics' };
+      default: return { bg: '#e0f2fe', color: '#0284c7', label: role, home: '/dashboard' };
     }
   };
 
@@ -138,7 +150,7 @@ export const DashboardLayout: React.FC = () => {
           </div>
         )}
 
-        {/* Navigation Links */}
+        {/* Navigation Links (Role Scoped Only) */}
         <nav style={{ flex: 1, padding: '0.75rem 0.75rem', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 4 }}>
           {menuItems.map((item, idx) => {
             const isActive = location.pathname === item.path || (item.path !== '/dashboard' && location.pathname.startsWith(item.path));
@@ -161,20 +173,7 @@ export const DashboardLayout: React.FC = () => {
                   fontSize: '0.9rem',
                   cursor: 'pointer',
                   transition: 'all 0.15s ease',
-                  textAlign: 'left',
-                  position: 'relative'
-                }}
-                onMouseEnter={(e) => {
-                  if (!isActive) {
-                    e.currentTarget.style.background = '#1e293b';
-                    e.currentTarget.style.color = '#ffffff';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!isActive) {
-                    e.currentTarget.style.background = 'transparent';
-                    e.currentTarget.style.color = '#94a3b8';
-                  }
+                  textAlign: 'left'
                 }}
               >
                 <div style={{ color: isActive ? '#ffffff' : '#64748b', display: 'flex', flexShrink: 0 }}>
@@ -215,11 +214,8 @@ export const DashboardLayout: React.FC = () => {
               color: '#f87171',
               fontWeight: 700,
               fontSize: '0.875rem',
-              cursor: 'pointer',
-              transition: 'background 0.2s ease'
+              cursor: 'pointer'
             }}
-            onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(239, 68, 68, 0.2)'}
-            onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)'}
           >
             <LogOut size={18} />
             {sidebarOpen && <span>Sign Out</span>}
@@ -260,7 +256,7 @@ export const DashboardLayout: React.FC = () => {
             <Search size={16} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
             <input 
               type="text"
-              placeholder="Search patients, doctors, records, or beds..."
+              placeholder="Search patients, doctors, records..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               style={{
@@ -278,7 +274,6 @@ export const DashboardLayout: React.FC = () => {
 
           {/* Top Right Actions */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
-            {/* Active Department Badge */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.4rem 0.85rem', background: roleStyle.bg, border: `1px solid ${roleStyle.color}40`, borderRadius: 20 }}>
               <ShieldCheck size={16} color={roleStyle.color} />
               <span style={{ fontSize: '0.8rem', fontWeight: 800, color: roleStyle.color }}>
@@ -286,31 +281,15 @@ export const DashboardLayout: React.FC = () => {
               </span>
             </div>
 
-            {/* Notification Bell */}
-            <button 
-              style={{
-                position: 'relative',
-                background: '#f1f5f9',
-                border: 'none',
-                width: 38,
-                height: 38,
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                color: '#64748b'
-              }}
-            >
+            <button style={{ position: 'relative', background: '#f1f5f9', border: 'none', width: 38, height: 38, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b' }}>
               <Bell size={18} />
               <span style={{ position: 'absolute', top: 8, right: 8, width: 8, height: 8, borderRadius: '50%', background: '#ef4444' }}></span>
             </button>
 
             <div style={{ width: 1, height: 24, background: '#e2e8f0' }}></div>
 
-            {/* User Profile Info */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <div style={{ width: 38, height: 38, borderRadius: '50%', background: 'linear-gradient(135deg, #0284c7, #0d9488)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '0.9rem', boxShadow: '0 2px 8px rgba(2, 132, 199, 0.25)' }}>
+              <div style={{ width: 38, height: 38, borderRadius: '50%', background: roleStyle.color, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '0.9rem' }}>
                 {user?.first_name?.charAt(0) || 'A'}
               </div>
               <div>
@@ -325,9 +304,27 @@ export const DashboardLayout: React.FC = () => {
           </div>
         </header>
 
-        {/* Main Dashboard Content View */}
+        {/* Main Dashboard Content View with Security Isolation Filter */}
         <main style={{ flex: 1, padding: '2rem', background: '#f8fafc' }}>
-          <Outlet />
+          {isCurrentPathAllowed ? (
+            <Outlet />
+          ) : (
+            <div style={{ maxWidth: 540, margin: '4rem auto', padding: '2.5rem', background: 'white', borderRadius: 16, border: '1px solid #fee2e2', boxShadow: '0 10px 25px rgba(220, 38, 38, 0.08)', textAlign: 'center' }}>
+              <div style={{ width: 64, height: 64, borderRadius: '50%', background: '#fee2e2', color: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.25rem' }}>
+                <Lock size={32} />
+              </div>
+              <h2 style={{ fontSize: '1.5rem', fontWeight: 900, color: '#0f172a', marginBottom: '0.5rem' }}>Access Restricted</h2>
+              <p style={{ color: '#64748b', fontSize: '0.95rem', lineHeight: 1.6, marginBottom: '1.75rem' }}>
+                You are currently logged in under <strong>{user?.department || roleStyle.label}</strong>. Unnecessary modules are restricted to enforce HIPAA compliance.
+              </p>
+              <button 
+                onClick={() => navigate(roleStyle.home)} 
+                style={{ background: roleStyle.color, color: 'white', padding: '0.75rem 1.5rem', borderRadius: 10, border: 'none', fontWeight: 800, fontSize: '0.95rem', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}
+              >
+                <ArrowLeft size={18} /> Return to {roleStyle.label} Home
+              </button>
+            </div>
+          )}
         </main>
       </div>
     </div>
