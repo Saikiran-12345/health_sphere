@@ -25,6 +25,7 @@ services:
       - "8000:8000"
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/healthsphere
+      - REDIS_URL=redis://redis:6379/0
       - SECRET_KEY=enterprise_super_secret_healthsphere_key
     depends_on:
       db:
@@ -45,6 +46,25 @@ services:
       - /app/node_modules
     depends_on:
       - backend
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+      
+  celery_worker:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    command: celery -A app.core.celery_app worker --loglevel=info -Q emails,reporting
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/healthsphere
+    depends_on:
+      - redis
+      - db
+    volumes:
+      - ./backend:/app
 
 volumes:
   postgres_data:

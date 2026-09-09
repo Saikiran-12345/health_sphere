@@ -3,6 +3,7 @@ import stripe
 from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks, Request
 from fastapi.responses import Response
 from app.services.pdf_generator import InvoicePDFGenerator
+from app.tasks.email_tasks import send_invoice_email
 from typing import Dict, Any
 
 router = APIRouter(prefix="/api/payments", tags=["Payments & Billing"])
@@ -56,6 +57,7 @@ async def stripe_webhook(request: Request):
         session = event['data']['object']
         # Here we would update the DB: Invoice.status = 'PAID'
         print(f"Payment success for invoice {session.client_reference_id}")
+        send_invoice_email.delay(session.client_reference_id, 'patient@example.com')
         
     return {"status": "success"}
 
