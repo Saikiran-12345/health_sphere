@@ -1,21 +1,21 @@
 import os
 import subprocess
 from datetime import datetime
-import boto3
-from botocore.exceptions import NoCredentialsError
 
-# Configuration
+# Local Configuration
 DB_HOST = os.getenv("DB_HOST", "localhost")
 DB_NAME = os.getenv("DB_NAME", "healthsphere")
 DB_USER = os.getenv("DB_USER", "postgres")
-S3_BUCKET = os.getenv("S3_BACKUP_BUCKET", "healthsphere-db-backups")
-AWS_REGION = os.getenv("AWS_REGION", "us-east-1")
+BACKUP_DIR = os.getenv("BACKUP_DIR", os.path.join(os.path.dirname(__file__), "..", "backups"))
 
-def backup_postgres():
-    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-    backup_file = f"healthsphere_backup_{timestamp}.sql"
+def backup_postgres_locally():
+    # Ensure local backup directory exists
+    os.makedirs(BACKUP_DIR, exist_ok=True)
     
-    print(f"Starting database backup to {backup_file}...")
+    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    backup_file = os.path.join(BACKUP_DIR, f"healthsphere_local_backup_{timestamp}.sql")
+    
+    print(f"Starting database backup to Local Storage: {backup_file}...")
     
     try:
         # Run pg_dump
@@ -24,30 +24,12 @@ def backup_postgres():
             check=True,
             env=dict(os.environ, PGPASSWORD=os.getenv("DB_PASSWORD", "postgres"))
         )
-        print("Backup created successfully.")
+        print(f"SUCCESS: Local backup secured at {backup_file}.")
         return backup_file
     except subprocess.CalledProcessError as e:
-        print(f"Error during backup: {e}")
+        print(f"ERROR: Backup failed: {e}")
         return None
 
-def upload_to_s3(file_name):
-    s3 = boto3.client('s3', region_name=AWS_REGION)
-    try:
-        print(f"Uploading {file_name} to S3 bucket {S3_BUCKET}...")
-        s3.upload_file(file_name, S3_BUCKET, file_name)
-        print("Upload Successful")
-        return True
-    except FileNotFoundError:
-        print("The file was not found")
-        return False
-    except NoCredentialsError:
-        print("Credentials not available for AWS S3")
-        return False
-
 if __name__ == "__main__":
-    file = backup_postgres()
-    if file:
-        success = upload_to_s3(file)
-        if success:
-            os.remove(file) # Clean up local file after S3 upload
-            print("Backup process completely finished.")
+    print("HealthSphere Local Offline Backup Utility Initiated...")
+    backup_postgres_locally()
