@@ -16,3 +16,6 @@ from app.models.operations import Ward, Bed, Admission, Surgery
 from app.models.billing import Invoice, InvoiceItem, InsuranceClaim
 from app.models.hr import EmployeeContract, Payroll
 from app.models.ambulance import Ambulance, DispatchRecord
+
+from app.models.assets import Asset, MaintenanceLog
+from app.models.dietary import DietPlan, MealOrder
