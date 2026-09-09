@@ -1,7 +1,11 @@
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Depends
+from app.core.rbac import RoleChecker
+from app.models.user import UserRole
 from typing import List, Dict
 
-router = APIRouter(prefix="/api/telemedicine", tags=["Telemedicine"])
+allow_doctors_only = RoleChecker([UserRole.DOCTOR, UserRole.ADMIN])
+
+router = APIRouter(prefix="/api/telemedicine", tags=["Telemedicine"], dependencies=[Depends(allow_doctors_only)])
 
 class ConnectionManager:
     def __init__(self):

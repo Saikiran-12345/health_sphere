@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from app.core.middleware import AdvancedAuditMiddleware, SimpleRateLimiterMiddleware
 from fastapi.middleware.cors import CORSMiddleware
 from app.api import auth, patients, clinical, pharmacy, laboratory, ai, operations, billing, hr, ambulance, telemedicine, export, forecasting, assets, dietary, notifications, analytics, audit, fhir
 
