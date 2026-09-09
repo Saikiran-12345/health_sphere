@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api import auth, patients, clinical, pharmacy, laboratory, ai, operations, billing, hr, ambulance, telemedicine, export, forecasting, assets, dietary
+from app.api import auth, patients, clinical, pharmacy, laboratory, ai, operations, billing, hr, ambulance, telemedicine, export, forecasting, assets, dietary, notifications, analytics
 
 app = FastAPI(title="HealthSphere Enterprise API", version="1.0.0")
 
@@ -39,3 +39,6 @@ app.include_router(forecasting.router)
 
 app.include_router(assets.router)
 app.include_router(dietary.router)
+
+app.include_router(notifications.router)
+app.include_router(analytics.router)

@@ -19,3 +19,5 @@ from app.models.ambulance import Ambulance, DispatchRecord
 
 from app.models.assets import Asset, MaintenanceLog
 from app.models.dietary import DietPlan, MealOrder
+
+from app.models.notifications import NotificationLog
