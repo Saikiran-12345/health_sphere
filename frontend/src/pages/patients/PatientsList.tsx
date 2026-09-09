@@ -1,89 +1,122 @@
-import React, { useState, useEffect } from 'react';
-import { Search, Plus, Filter, MoreVertical, Edit, Trash, FileText } from 'lucide-react';
-import axios from 'axios';
+import React, { useState } from 'react';
+import { Search, Plus, Filter, Calendar } from 'lucide-react';
+import { useHospitalData, type Patient } from '../../context/DataContext';
 
-interface Patient {
-  id: string;
-  first_name: string;
-  last_name: string;
-  date_of_birth: string;
-  gender: string;
-  blood_group: string;
-  phone_number: string;
-}
+const statusMap: any = {
+  admitted: { label: 'Admitted', cls: 'badge-inqueue' },
+  outpatient: { label: 'Outpatient', cls: 'badge-primary' },
+  discharged: { label: 'Discharged', cls: 'badge-completed' },
+  critical: { label: 'Critical', cls: 'badge-critical' },
+};
 
-export const PatientsList: React.FC = () => {
-  const [patients, setPatients] = useState<Patient[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
+export const PatientsList = () => {
+  const { patients, addPatient } = useHospitalData();
+  const [search, setSearch] = useState('');
+  const [showModal, setShowModal] = useState(false);
 
-  useEffect(() => {
-    // In a real app, fetch from /api/patients
-    setPatients([
-      { id: '1', first_name: 'John', last_name: 'Doe', date_of_birth: '1980-05-15', gender: 'Male', blood_group: 'O+', phone_number: '+1234567890' },
-      { id: '2', first_name: 'Jane', last_name: 'Smith', date_of_birth: '1992-11-22', gender: 'Female', blood_group: 'A-', phone_number: '+0987654321' },
-      { id: '3', first_name: 'Alice', last_name: 'Johnson', date_of_birth: '1975-03-08', gender: 'Female', blood_group: 'B+', phone_number: '+1122334455' },
-    ]);
-  }, []);
+  const [name, setName] = useState('');
+  const [age, setAge] = useState<number>(35);
+  const [gender, setGender] = useState('Male');
+  const [phone, setPhone] = useState('');
+  const [blood, setBlood] = useState('O+');
+  const [condition, setCondition] = useState('');
+  const [doctor, setDoctor] = useState('Dr. Saikiran Reddy');
+  const [status, setStatus] = useState('admitted');
+
+  const filtered = patients.filter(p => p.name.toLowerCase().includes(search.toLowerCase()) || p.id.toLowerCase().includes(search.toLowerCase()));
+
+  const handleAddPatient = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name) return;
+    const newPat: Patient = {
+      id: `P-${Math.floor(1000 + Math.random() * 9000)}`,
+      name,
+      age: Number(age),
+      gender,
+      phone: phone || '+91 98765 00000',
+      blood,
+      condition: condition || 'General Checkup',
+      doctor,
+      admitted: status === 'admitted' || status === 'critical' ? '09 Sep 2026, 09:30 AM' : '-',
+      status
+    };
+    addPatient(newPat);
+    setName(''); setCondition(''); setPhone(''); setShowModal(false);
+  };
 
   return (
-    <div className="bg-white rounded-lg shadow h-full flex flex-col">
-      <div className="p-6 border-b border-gray-200 flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-gray-800">Patient Directory</h2>
-        <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-          <Plus size={18} /> New Patient
-        </button>
-      </div>
-      
-      <div className="p-4 border-b border-gray-200 bg-gray-50 flex gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-          <input 
-            type="text" 
-            placeholder="Search patients by name, ID, or phone..." 
-            className="w-full pl-10 pr-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+    <div>
+      <div className="page-header">
+        <div className="page-title">
+          <h2>Patient Registry Directory</h2>
+          <p>Register, track, and manage all inpatient and outpatient health records</p>
         </div>
-        <button className="flex items-center gap-2 px-4 py-2 border rounded-md bg-white hover:bg-gray-50">
-          <Filter size={18} /> Filters
+        <button className="btn btn-primary" onClick={() => setShowModal(true)}>
+          <Plus size={16} /> Register Patient
         </button>
       </div>
 
-      <div className="flex-1 overflow-auto">
-        <table className="w-full text-left border-collapse">
+      <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem' }}>
+        <div style={{ flex: 1, position: 'relative' }}>
+          <Search size={16} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+          <input className="form-control" style={{ paddingLeft: '2.5rem' }} placeholder="Search by patient name, ID, or phone number..." value={search} onChange={e => setSearch(e.target.value)} />
+        </div>
+      </div>
+
+      <div className="data-table-container">
+        <div className="table-header">
+          <h3>Registered Patients ({filtered.length})</h3>
+          <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Updated live</span>
+        </div>
+        <table className="data-table">
           <thead>
-            <tr className="bg-gray-50 text-gray-600 text-sm uppercase tracking-wider">
-              <th className="p-4 font-semibold border-b">Name</th>
-              <th className="p-4 font-semibold border-b">ID</th>
-              <th className="p-4 font-semibold border-b">DOB</th>
-              <th className="p-4 font-semibold border-b">Gender</th>
-              <th className="p-4 font-semibold border-b">Blood Group</th>
-              <th className="p-4 font-semibold border-b">Contact</th>
-              <th className="p-4 font-semibold border-b text-right">Actions</th>
+            <tr>
+              <th>Patient ID</th><th>Full Name</th><th>Age / Gender</th><th>Blood</th><th>Diagnosis / Condition</th><th>Primary Specialist</th><th>Admission Date</th><th>Status</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200">
-            {patients.map((patient) => (
-              <tr key={patient.id} className="hover:bg-gray-50 transition-colors">
-                <td className="p-4 font-medium text-gray-900">{patient.first_name} {patient.last_name}</td>
-                <td className="p-4 text-gray-500 text-sm">PAT-{patient.id.padStart(5, '0')}</td>
-                <td className="p-4 text-gray-600">{patient.date_of_birth}</td>
-                <td className="p-4 text-gray-600">{patient.gender}</td>
-                <td className="p-4">
-                  <span className="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs font-bold">{patient.blood_group}</span>
-                </td>
-                <td className="p-4 text-gray-600">{patient.phone_number}</td>
-                <td className="p-4 flex justify-end gap-3 text-gray-400">
-                  <button className="hover:text-blue-600" title="View Records"><FileText size={18} /></button>
-                  <button className="hover:text-green-600" title="Edit"><Edit size={18} /></button>
-                  <button className="hover:text-red-600" title="Delete"><Trash size={18} /></button>
-                </td>
+          <tbody>
+            {filtered.map(p => (
+              <tr key={p.id}>
+                <td style={{ fontWeight: 700, color: 'var(--primary-color)' }}>{p.id}</td>
+                <td style={{ fontWeight: 700, color: 'var(--text-main)' }}>{p.name}</td>
+                <td>{p.age} / {p.gender}</td>
+                <td><span className="badge badge-primary">{p.blood}</span></td>
+                <td>{p.condition}</td>
+                <td style={{ color: 'var(--text-muted)', fontWeight: 500 }}>{p.doctor}</td>
+                <td style={{ fontSize: '0.825rem', color: 'var(--text-muted)' }}>{p.admitted}</td>
+                <td><span className={`badge ${statusMap[p.status]?.cls || 'badge-primary'}`}>{statusMap[p.status]?.label || p.status}</span></td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
+      {showModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h3>Register New Patient</h3>
+              <button className="modal-close" onClick={() => setShowModal(false)}>&times;</button>
+            </div>
+            <form onSubmit={handleAddPatient}>
+              <div className="modal-body">
+                <div className="form-group"><label>Patient Full Name</label><input className="form-control" placeholder="e.g. Ramesh Reddy" value={name} onChange={e => setName(e.target.value)} required /></div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                  <div className="form-group"><label>Age</label><input className="form-control" type="number" value={age} onChange={e => setAge(Number(e.target.value))} required /></div>
+                  <div className="form-group"><label>Gender</label><select className="form-control" value={gender} onChange={e => setGender(e.target.value)}><option value="Male">Male</option><option value="Female">Female</option></select></div>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                  <div className="form-group"><label>Blood Group</label><select className="form-control" value={blood} onChange={e => setBlood(e.target.value)}><option value="O+">O+</option><option value="A+">A+</option><option value="B+">B+</option><option value="AB+">AB+</option><option value="O-">O-</option></select></div>
+                  <div className="form-group"><label>Admission Status</label><select className="form-control" value={status} onChange={e => setStatus(e.target.value)}><option value="admitted">Admitted</option><option value="outpatient">Outpatient</option><option value="critical">Critical</option></select></div>
+                </div>
+                <div className="form-group"><label>Primary Diagnosis / Condition</label><input className="form-control" placeholder="e.g. Acute Coronary Syndrome" value={condition} onChange={e => setCondition(e.target.value)} /></div>
+                <div className="form-group"><label>Assigned Specialist</label><select className="form-control" value={doctor} onChange={e => setDoctor(e.target.value)}><option value="Dr. Saikiran Reddy">Dr. Saikiran Reddy (Cardiology)</option><option value="Dr. Priya Nair">Dr. Priya Nair (Neurology)</option><option value="Dr. Neha Gupta">Dr. Neha Gupta (Maternity)</option><option value="Dr. Amit Shah">Dr. Amit Shah (General)</option></select></div>
+              </div>
+              <div className="modal-footer"><button type="button" className="btn btn-outline" onClick={() => setShowModal(false)}>Cancel</button><button type="submit" className="btn btn-primary">Register Patient</button></div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

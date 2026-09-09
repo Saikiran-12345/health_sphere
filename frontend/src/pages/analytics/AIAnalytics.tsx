@@ -1,120 +1,57 @@
-import React, { useState } from 'react';
-import { Activity, AlertTriangle, ShieldCheck, BrainCircuit, HeartPulse } from 'lucide-react';
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, BarChart, Bar } from 'recharts';
+import React from 'react';
+import { BarChart3, Brain, AlertTriangle, ShieldCheck } from 'lucide-react';
 
-const dummyRiskData = [
-  { ageGroup: '18-30', lowRisk: 80, highRisk: 5 },
-  { ageGroup: '31-45', lowRisk: 75, highRisk: 15 },
-  { ageGroup: '46-60', lowRisk: 50, highRisk: 35 },
-  { ageGroup: '61-75', lowRisk: 30, highRisk: 60 },
-  { ageGroup: '75+', lowRisk: 10, highRisk: 85 },
+const predictions = [
+  { patient: 'Vikram Singh', riskScore: '89%', category: 'High Cardiac Risk', model: 'Random Forest v2.4', action: 'Immediate ICU Monitoring' },
+  { patient: 'Deepak Mishra', riskScore: '74%', category: 'Renal Complication', model: 'XGBoost Sepsis ML', action: 'Schedule Nephrology Consult' },
+  { patient: 'Arun Kumar', riskScore: '18%', category: 'Low Readmission Risk', model: 'Prophet Census', action: 'Routine OPD Followup' },
+  { patient: 'Priya Sharma', riskScore: '12%', category: 'Stable Obstetric', model: 'Clinical Decision Support', action: 'Standard Care' },
 ];
 
-const dummyAnomalyData = [
-  { time: '08:00', load: 45, threshold: 80 },
-  { time: '10:00', load: 78, threshold: 80 },
-  { time: '12:00', load: 120, threshold: 80 }, // Anomaly Spike
-  { time: '14:00', load: 85, threshold: 80 },
-  { time: '16:00', load: 60, threshold: 80 },
-];
-
-export const AIAnalytics: React.FC = () => {
-  const [patientVitals, setPatientVitals] = useState({ age: 68, systolic_bp: 145, bmi: 31 });
-  const [riskScore, setRiskScore] = useState<number | null>(82);
-
-  const simulatePrediction = () => {
-    setRiskScore(null);
-    setTimeout(() => setRiskScore(Math.floor(Math.random() * 40) + 60), 800); // Simulate API call to ML model
-  };
-
+export const AIAnalytics = () => {
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-          <BrainCircuit className="text-purple-600" size={28}/> AI Risk & Analytics Engine
-        </h2>
+    <div>
+      <div className="page-header">
+        <div className="page-title">
+          <h2>AI Clinical Diagnostics & Predictive Risk</h2>
+          <p>Machine Learning patient risk scoring, readmission prediction, and automated clinical alerts</p>
+        </div>
       </div>
 
-      {/* Top Models View */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        
-        {/* Real-time Patient Predictor */}
-        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-          <h3 className="text-lg font-bold text-gray-800 border-b pb-2 mb-4 flex items-center gap-2">
-            <HeartPulse className="text-red-500"/> Real-Time Patient Risk Predictor (Random Forest)
-          </h3>
-          <div className="space-y-4">
-            <div className="grid grid-cols-3 gap-4">
-              <div>
-                <label className="block text-xs font-medium text-gray-500 uppercase">Age</label>
-                <input type="number" value={patientVitals.age} onChange={e => setPatientVitals({...patientVitals, age: +e.target.value})} className="mt-1 w-full p-2 border rounded bg-gray-50" />
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-gray-500 uppercase">Systolic BP</label>
-                <input type="number" value={patientVitals.systolic_bp} onChange={e => setPatientVitals({...patientVitals, systolic_bp: +e.target.value})} className="mt-1 w-full p-2 border rounded bg-gray-50" />
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-gray-500 uppercase">BMI</label>
-                <input type="number" value={patientVitals.bmi} onChange={e => setPatientVitals({...patientVitals, bmi: +e.target.value})} className="mt-1 w-full p-2 border rounded bg-gray-50" />
-              </div>
-            </div>
-            
-            <button onClick={simulatePrediction} className="w-full py-2 bg-purple-600 hover:bg-purple-700 text-white rounded font-medium transition-colors">
-              Run Inference
-            </button>
-            
-            {riskScore !== null && (
-              <div className={`mt-4 p-4 rounded-lg flex items-center gap-4 ${riskScore > 75 ? 'bg-red-50 border border-red-200' : 'bg-green-50 border border-green-200'}`}>
-                {riskScore > 75 ? <AlertTriangle size={32} className="text-red-600"/> : <ShieldCheck size={32} className="text-green-600"/>}
-                <div>
-                  <h4 className={`text-xl font-bold ${riskScore > 75 ? 'text-red-800' : 'text-green-800'}`}>
-                    {riskScore}% Readmission Risk
-                  </h4>
-                  <p className="text-sm text-gray-600 mt-1">Based on historical data and current vitals.</p>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
+      <div className="dashboard-grid">
+        <div className="card-summary"><div className="card-summary-info"><h3>Active ML Models</h3><p>4 Models</p></div><div className="card-summary-icon" style={{ background: '#ede9fe', color: '#8b5cf6' }}><Brain size={24} /></div></div>
+        <div className="card-summary"><div className="card-summary-info"><h3>High Risk Patients</h3><p style={{ color: '#dc2626' }}>2 Patients</p></div><div className="card-summary-icon" style={{ background: '#fee2e2', color: '#dc2626' }}><AlertTriangle size={24} /></div></div>
+        <div className="card-summary"><div className="card-summary-info"><h3>Model Confidence</h3><p style={{ color: '#16a34a' }}>94.2%</p></div><div className="card-summary-icon" style={{ background: '#dcfce7', color: '#16a34a' }}><ShieldCheck size={24} /></div></div>
+      </div>
 
-        {/* Operational Anomaly Chart */}
-        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-          <h3 className="text-lg font-bold text-gray-800 border-b pb-2 mb-4 flex items-center gap-2">
-            <Activity className="text-orange-500"/> Operational Load Anomalies (Isolation Forest)
-          </h3>
-          <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={dummyAnomalyData}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false}/>
-                <XAxis dataKey="time" />
-                <YAxis />
-                <Tooltip />
-                <Line type="monotone" dataKey="threshold" stroke="#ef4444" strokeWidth={2} strokeDasharray="5 5" dot={false} name="Safety Threshold"/>
-                <Line type="monotone" dataKey="load" stroke="#f97316" strokeWidth={3} name="Hospital Load"/>
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-        
+      <div className="data-table-container">
+        <div className="table-header"><h3>Real-Time AI Patient Risk Matrix (09 Sep 2026)</h3></div>
+        <table className="data-table">
+          <thead><tr><th>Patient Name</th><th>AI Risk Score</th><th>Risk Category</th><th>ML Algorithm</th><th>Recommended Clinical Action</th></tr></thead>
+          <tbody>
+            {predictions.map((p, idx) => (
+              <tr key={idx}>
+                <td style={{ fontWeight: 700, color: 'var(--text-main)' }}>{p.patient}</td>
+                <td>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <div style={{ width: 100, height: 8, background: '#e2e8f0', borderRadius: 4, overflow: 'hidden' }}>
+                      <div style={{ width: p.riskScore, height: '100%', background: parseInt(p.riskScore) > 70 ? '#dc2626' : parseInt(p.riskScore) > 40 ? '#d97706' : '#16a34a' }}></div>
+                    </div>
+                    <span style={{ fontWeight: 700, fontSize: '0.85rem' }}>{p.riskScore}</span>
+                  </div>
+                </td>
+                <td>
+                  <span className={`badge ${parseInt(p.riskScore) > 70 ? 'badge-critical' : parseInt(p.riskScore) > 40 ? 'badge-monitoring' : 'badge-stable'}`}>
+                    {p.category}
+                  </span>
+                </td>
+                <td style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{p.model}</td>
+                <td style={{ fontWeight: 600, color: 'var(--text-main)' }}>{p.action}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
-      
-      {/* Risk Distribution Chart */}
-      <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-         <h3 className="text-lg font-bold text-gray-800 mb-4">Demographic Risk Distribution</h3>
-         <div className="h-72">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={dummyRiskData}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false}/>
-                <XAxis dataKey="ageGroup" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="lowRisk" stackId="a" fill="#22c55e" name="Low Risk" />
-                <Bar dataKey="highRisk" stackId="a" fill="#ef4444" name="High Risk" />
-              </BarChart>
-            </ResponsiveContainer>
-         </div>
-      </div>
-      
     </div>
   );
 };

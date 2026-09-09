@@ -1,82 +1,52 @@
-import React, { useState, useEffect } from 'react';
-import { Video, Mic, MicOff, VideoOff, PhoneOff, MessageSquare } from 'lucide-react';
+import React from 'react';
+import { Video, Calendar, Clock, UserCheck, Plus } from 'lucide-react';
 
-export const TelemedicineDashboard: React.FC = () => {
-  const [inCall, setInCall] = useState(false);
-  const [micOn, setMicOn] = useState(true);
-  const [videoOn, setVideoOn] = useState(true);
-  const [messages, setMessages] = useState<string[]>([]);
-  const [input, setInput] = useState("");
+const consultations = [
+  { id: 'TELE-501', patient: 'Anita Desai', doctor: 'Dr. Saikiran Reddy', dept: 'Cardiology', time: '10:30 AM', duration: '20 min', status: 'Connecting' },
+  { id: 'TELE-502', patient: 'Sunita Rao', doctor: 'Dr. Neha Gupta', dept: 'Gynecology', time: '11:15 AM', duration: '15 min', status: 'Scheduled' },
+  { id: 'TELE-503', patient: 'Latha Krishnan', doctor: 'Dr. Priya Nair', dept: 'Neurology', time: '09:00 AM', duration: '25 min', status: 'Completed' },
+];
 
-  const handleStartCall = () => setInCall(true);
-  const handleEndCall = () => setInCall(false);
-
+export const TelemedicineDashboard = () => {
   return (
-    <div className="bg-white rounded-lg shadow h-full flex flex-col p-6">
-      <div className="flex justify-between items-center mb-6 border-b pb-4">
-        <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-          <Video className="text-blue-600"/> Telemedicine & Virtual Consultations
-        </h2>
-        {!inCall && (
-          <button onClick={handleStartCall} className="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700">
-            Start Consultation Room
-          </button>
-        )}
+    <div>
+      <div className="page-header">
+        <div className="page-title">
+          <h2>Telemedicine & Virtual Consultations</h2>
+          <p>HD video consultations, remote patient monitoring, and digital prescriptions</p>
+        </div>
+        <button className="btn btn-primary"><Plus size={16} /> Start Instant Call</button>
       </div>
 
-      {!inCall ? (
-        <div className="flex-1 flex flex-col items-center justify-center text-gray-500">
-          <Video size={64} className="text-gray-300 mb-4" />
-          <h3 className="text-xl font-medium">No Active Consultations</h3>
-          <p>Click "Start Consultation Room" to generate a secure video link.</p>
-        </div>
-      ) : (
-        <div className="flex-1 flex gap-6">
-          {/* Video Area */}
-          <div className="flex-1 flex flex-col bg-gray-900 rounded-lg overflow-hidden relative">
-            <div className="flex-1 flex items-center justify-center text-white">
-              {videoOn ? <span className="text-2xl">Camera Active (Mock)</span> : <VideoOff size={64} className="text-gray-600"/>}
-            </div>
-            
-            {/* Controls */}
-            <div className="bg-gray-800 p-4 flex justify-center gap-4">
-              <button onClick={() => setMicOn(!micOn)} className={`p-4 rounded-full ${micOn ? 'bg-gray-700 text-white hover:bg-gray-600' : 'bg-red-500 text-white'}`}>
-                {micOn ? <Mic size={24}/> : <MicOff size={24}/>}
-              </button>
-              <button onClick={() => setVideoOn(!videoOn)} className={`p-4 rounded-full ${videoOn ? 'bg-gray-700 text-white hover:bg-gray-600' : 'bg-red-500 text-white'}`}>
-                {videoOn ? <Video size={24}/> : <VideoOff size={24}/>}
-              </button>
-              <button onClick={handleEndCall} className="p-4 rounded-full bg-red-600 text-white hover:bg-red-700">
-                <PhoneOff size={24}/>
-              </button>
-            </div>
-          </div>
-          
-          {/* Chat Area */}
-          <div className="w-80 flex flex-col border rounded-lg bg-gray-50">
-            <div className="p-4 border-b bg-white flex items-center gap-2 font-bold text-gray-700">
-              <MessageSquare size={18}/> Consultation Chat
-            </div>
-            <div className="flex-1 p-4 overflow-auto space-y-4">
-              {messages.map((m, i) => (
-                <div key={i} className="bg-blue-100 text-blue-900 p-2 rounded-lg text-sm max-w-[85%] self-end">
-                  {m}
-                </div>
-              ))}
-            </div>
-            <div className="p-3 bg-white border-t flex gap-2">
-              <input 
-                value={input} 
-                onChange={e => setInput(e.target.value)}
-                onKeyDown={e => { if (e.key === 'Enter') { setMessages([...messages, input]); setInput(''); } }}
-                className="flex-1 border rounded px-2 py-1 text-sm" 
-                placeholder="Type a message..." 
-              />
-              <button onClick={() => { setMessages([...messages, input]); setInput(''); }} className="bg-blue-600 text-white px-3 rounded text-sm">Send</button>
-            </div>
-          </div>
-        </div>
-      )}
+      <div className="dashboard-grid">
+        <div className="card-summary"><div className="card-summary-info"><h3>Virtual Today</h3><p>{consultations.length}</p></div><div className="card-summary-icon" style={{ background: '#e0f2fe', color: '#0284c7' }}><Video size={24} /></div></div>
+        <div className="card-summary"><div className="card-summary-info"><h3>Active Call</h3><p style={{ color: '#16a34a' }}>1</p></div><div className="card-summary-icon" style={{ background: '#dcfce7', color: '#16a34a' }}><UserCheck size={24} /></div></div>
+        <div className="card-summary"><div className="card-summary-info"><h3>Upcoming</h3><p style={{ color: '#d97706' }}>1</p></div><div className="card-summary-icon" style={{ background: '#fef3c7', color: '#d97706' }}><Clock size={24} /></div></div>
+      </div>
+
+      <div className="data-table-container">
+        <div className="table-header"><h3>Telehealth Queue (09 Sep 2026)</h3></div>
+        <table className="data-table">
+          <thead><tr><th>Session ID</th><th>Patient Name</th><th>Specialist</th><th>Department</th><th>Scheduled Time</th><th>Duration</th><th>Action</th></tr></thead>
+          <tbody>
+            {consultations.map(c => (
+              <tr key={c.id}>
+                <td style={{ fontWeight: 600, color: 'var(--primary-color)' }}>{c.id}</td>
+                <td style={{ fontWeight: 700 }}>{c.patient}</td>
+                <td>{c.doctor}</td>
+                <td>{c.dept}</td>
+                <td style={{ fontWeight: 600 }}>{c.time}</td>
+                <td>{c.duration}</td>
+                <td>
+                  <button className={`btn ${c.status === 'Connecting' ? 'btn-primary' : 'btn-outline'}`} style={{ padding: '4px 12px', fontSize: '0.8rem' }}>
+                    <Video size={14} /> {c.status === 'Connecting' ? 'Join Call' : c.status}
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

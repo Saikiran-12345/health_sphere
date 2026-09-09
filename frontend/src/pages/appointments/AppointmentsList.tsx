@@ -1,70 +1,93 @@
 import React, { useState } from 'react';
-import { Calendar as CalendarIcon, Clock, User, Activity, CheckCircle, XCircle } from 'lucide-react';
+import { Calendar, Clock, Plus, Filter } from 'lucide-react';
+import { useHospitalData, type Appointment } from '../../context/DataContext';
 
-export const AppointmentsList: React.FC = () => {
-  const [appointments] = useState([
-    { id: '1', patient: 'John Doe', doctor: 'Dr. Sarah Smith', date: '2026-09-09', time: '10:00 AM', type: 'Checkup', status: 'CONFIRMED' },
-    { id: '2', patient: 'Jane Roe', doctor: 'Dr. Michael Chen', date: '2026-09-09', time: '11:30 AM', type: 'Consultation', status: 'CHECKED_IN' },
-    { id: '3', patient: 'Sam Smith', doctor: 'Dr. Sarah Smith', date: '2026-09-09', time: '02:00 PM', type: 'Follow-up', status: 'SCHEDULED' },
-  ]);
+const statusMap: any = {
+  scheduled: { label: 'Scheduled', cls: 'badge-primary' },
+  confirmed: { label: 'Confirmed', cls: 'badge-inqueue' },
+  in_progress: { label: 'In Progress', cls: 'badge-completed' },
+  completed: { label: 'Completed', cls: 'badge-stable' },
+  cancelled: { label: 'Cancelled', cls: 'badge-critical' },
+};
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'CONFIRMED': return 'bg-blue-100 text-blue-800';
-      case 'CHECKED_IN': return 'bg-green-100 text-green-800';
-      case 'SCHEDULED': return 'bg-gray-100 text-gray-800';
-      case 'CANCELLED': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
+export const AppointmentsList = () => {
+  const { appointments, addAppointment } = useHospitalData();
+  const [showModal, setShowModal] = useState(false);
+
+  const [patient, setPatient] = useState('');
+  const [doctor, setDoctor] = useState('Dr. Saikiran Reddy');
+  const [dept, setDept] = useState('Cardiology');
+  const [date, setDate] = useState('09 Sep 2026');
+  const [time, setTime] = useState('10:00 AM');
+
+  const handleBookAppointment = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!patient) return;
+    const newApt: Appointment = {
+      id: `APT-${Math.floor(300 + Math.random() * 600)}`,
+      patient, doctor, dept, date, time, status: 'confirmed'
+    };
+    addAppointment(newApt);
+    setPatient('');
+    setShowModal(false);
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-gray-800">Appointments Schedule</h2>
-        <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 shadow-sm flex items-center gap-2">
-          <CalendarIcon size={18} /> Schedule New
+    <div>
+      <div className="page-header">
+        <div className="page-title">
+          <h2>Clinical Consultation Roster</h2>
+          <p>Schedule, manage, and inspect patient appointments for today (09 Sep 2026)</p>
+        </div>
+        <button className="btn btn-primary" onClick={() => setShowModal(true)}>
+          <Plus size={16} /> Book Appointment
         </button>
       </div>
 
-      <div className="grid gap-4">
-        {appointments.map(appt => (
-          <div key={appt.id} className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 flex items-center justify-between hover:shadow-md transition-shadow">
-            <div className="flex items-center gap-6">
-              <div className="p-3 bg-blue-50 text-blue-600 rounded-full">
-                <Clock size={24} />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-gray-900">{appt.time}</h3>
-                <p className="text-sm text-gray-500">{appt.date}</p>
-              </div>
-              <div className="h-10 w-px bg-gray-200"></div>
-              <div>
-                <div className="flex items-center gap-2 text-gray-800 font-medium">
-                  <User size={16} className="text-gray-400"/> {appt.patient}
-                </div>
-                <div className="flex items-center gap-2 text-sm text-gray-500 mt-1">
-                  <Activity size={16} /> {appt.doctor} • {appt.type}
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-4">
-              <span className={`px-3 py-1 rounded-full text-xs font-bold tracking-wide ${getStatusColor(appt.status)}`}>
-                {appt.status.replace('_', ' ')}
-              </span>
-              <div className="flex gap-2">
-                <button className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-full transition-colors" title="Check In">
-                  <CheckCircle size={20} />
-                </button>
-                <button className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors" title="Cancel">
-                  <XCircle size={20} />
-                </button>
-              </div>
-            </div>
-          </div>
-        ))}
+      <div className="dashboard-grid">
+        <div className="card-summary"><div className="card-summary-info"><h3>Total Scheduled</h3><p>{appointments.length}</p></div><div className="card-summary-icon" style={{ background: '#e0f2fe', color: '#0284c7' }}><Calendar size={24} /></div></div>
+        <div className="card-summary"><div className="card-summary-info"><h3>Confirmed</h3><p style={{ color: '#16a34a' }}>{appointments.filter(a => a.status === 'confirmed').length}</p></div><div className="card-summary-icon" style={{ background: '#dcfce7', color: '#16a34a' }}><Clock size={24} /></div></div>
+        <div className="card-summary"><div className="card-summary-info"><h3>In Consultation</h3><p style={{ color: '#8b5cf6' }}>{appointments.filter(a => a.status === 'in_progress').length}</p></div><div className="card-summary-icon" style={{ background: '#ede9fe', color: '#8b5cf6' }}><Clock size={24} /></div></div>
+        <div className="card-summary"><div className="card-summary-info"><h3>Completed</h3><p style={{ color: '#0d9488' }}>{appointments.filter(a => a.status === 'completed').length}</p></div><div className="card-summary-icon" style={{ background: '#ccfbf1', color: '#0d9488' }}><Calendar size={24} /></div></div>
       </div>
+
+      <div className="data-table-container">
+        <div className="table-header"><h3>Active Appointments Schedule</h3></div>
+        <table className="data-table">
+          <thead><tr><th>Appointment ID</th><th>Patient Name</th><th>Consulting Specialist</th><th>Department</th><th>Date & Time</th><th>Status</th></tr></thead>
+          <tbody>
+            {appointments.map(a => (
+              <tr key={a.id}>
+                <td style={{ fontWeight: 600, color: 'var(--primary-color)' }}>{a.id}</td>
+                <td style={{ fontWeight: 700, color: 'var(--text-main)' }}>{a.patient}</td>
+                <td>{a.doctor}</td>
+                <td>{a.dept}</td>
+                <td style={{ color: 'var(--text-muted)', fontWeight: 500 }}>09 Sep 2026 ({a.time})</td>
+                <td><span className={`badge ${statusMap[a.status]?.cls || 'badge-primary'}`}>{statusMap[a.status]?.label || a.status}</span></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {showModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-header"><h3>Book Consultation Slot</h3><button className="modal-close" onClick={() => setShowModal(false)}>&times;</button></div>
+            <form onSubmit={handleBookAppointment}>
+              <div className="modal-body">
+                <div className="form-group"><label>Patient Full Name</label><input className="form-control" placeholder="e.g. Anita Desai" value={patient} onChange={e => setPatient(e.target.value)} required /></div>
+                <div className="form-group"><label>Consulting Specialist</label><select className="form-control" value={doctor} onChange={e => setDoctor(e.target.value)}><option value="Dr. Saikiran Reddy">Dr. Saikiran Reddy (Cardiology)</option><option value="Dr. Priya Nair">Dr. Priya Nair (Neurology)</option><option value="Dr. Neha Gupta">Dr. Neha Gupta (Maternity)</option><option value="Dr. Amit Shah">Dr. Amit Shah (General)</option></select></div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                  <div className="form-group"><label>Department</label><select className="form-control" value={dept} onChange={e => setDept(e.target.value)}><option value="Cardiology">Cardiology</option><option value="Neurology">Neurology</option><option value="Maternity">Maternity</option></select></div>
+                  <div className="form-group"><label>Time Slot</label><input className="form-control" value={time} onChange={e => setTime(e.target.value)} required /></div>
+                </div>
+              </div>
+              <div className="modal-footer"><button type="button" className="btn btn-outline" onClick={() => setShowModal(false)}>Cancel</button><button type="submit" className="btn btn-primary">Confirm Booking</button></div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
