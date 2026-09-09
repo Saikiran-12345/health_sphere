@@ -34,6 +34,7 @@ const ProtectedRoute = ({ children, allowedRoles }: { children: React.ReactNode,
 function AppRoutes() {
   return (
     <Routes>
+      <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<Login />} />
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
       
