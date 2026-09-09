@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api import auth, patients, clinical, pharmacy, laboratory, ai
+from app.api import auth, patients, clinical, pharmacy, laboratory, ai, operations
 
 app = FastAPI(title="HealthSphere Enterprise API", version="1.0.0")
 
@@ -24,3 +24,5 @@ app.include_router(pharmacy.router)
 app.include_router(laboratory.router)
 
 app.include_router(ai.router)
+
+app.include_router(operations.router)

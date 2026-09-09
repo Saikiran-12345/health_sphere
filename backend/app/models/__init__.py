@@ -10,3 +10,5 @@ from app.models.medical_record import MedicalRecord, RecordType
 
 from app.models.pharmacy import Medicine, Prescription, PrescriptionItem
 from app.models.laboratory import LabTest, LabOrder
+
+from app.models.operations import Ward, Bed, Admission, Surgery
