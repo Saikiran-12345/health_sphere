@@ -12,3 +12,7 @@ from app.models.pharmacy import Medicine, Prescription, PrescriptionItem
 from app.models.laboratory import LabTest, LabOrder
 
 from app.models.operations import Ward, Bed, Admission, Surgery
+
+from app.models.billing import Invoice, InvoiceItem, InsuranceClaim
+from app.models.hr import EmployeeContract, Payroll
+from app.models.ambulance import Ambulance, DispatchRecord
