@@ -9,7 +9,7 @@ export const departments = [
     name: 'Hospital Administration',
     email: 'admin@healthsphere.com',
     password: 'admin123',
-    user: { first_name: 'Saikiran', last_name: 'Reddy', role: 'ADMIN', department: 'Executive Administration', title: 'Chief Administrator' },
+    user: { id: 'ADMIN-001', first_name: 'Saikiran', last_name: 'Reddy', role: 'ADMIN', department: 'Executive Administration', title: 'Chief Administrator' },
     icon: Building2,
     color: '#0284c7',
     bg: '#e0f2fe',
@@ -21,7 +21,7 @@ export const departments = [
     name: 'Cardiology & Outpatient (OPD)',
     email: 'cardiology@healthsphere.com',
     password: 'cardiology123',
-    user: { first_name: 'Priya', last_name: 'Nair', role: 'DOCTOR', department: 'Cardiology & OPD', title: 'Senior Cardiologist' },
+    user: { id: 'DOC-101', first_name: 'Priya', last_name: 'Nair', role: 'DOCTOR', department: 'Cardiology & OPD', title: 'Senior Cardiologist' },
     icon: Stethoscope,
     color: '#0d9488',
     bg: '#ccfbf1',
@@ -33,7 +33,7 @@ export const departments = [
     name: 'ICU & Bed Admissions',
     email: 'icu@healthsphere.com',
     password: 'icu123',
-    user: { first_name: 'Anjali', last_name: 'Sharma', role: 'NURSE_ICU', department: 'ICU & Inpatient', title: 'ICU Charge Nurse' },
+    user: { id: 'NURSE-202', first_name: 'Anjali', last_name: 'Sharma', role: 'NURSE_ICU', department: 'ICU & Inpatient', title: 'ICU Charge Nurse' },
     icon: Bed,
     color: '#dc2626',
     bg: '#fee2e2',
@@ -45,7 +45,7 @@ export const departments = [
     name: 'Pharmacy & Supplies',
     email: 'pharmacy@healthsphere.com',
     password: 'pharmacy123',
-    user: { first_name: 'Ramesh', last_name: 'Kumar', role: 'PHARMACIST', department: 'Pharmacy & Supplies', title: 'Chief Pharmacist' },
+    user: { id: 'PHARM-303', first_name: 'Ramesh', last_name: 'Kumar', role: 'PHARMACIST', department: 'Pharmacy & Supplies', title: 'Chief Pharmacist' },
     icon: Pill,
     color: '#d97706',
     bg: '#fef3c7',
@@ -57,7 +57,7 @@ export const departments = [
     name: 'Billing & Finance',
     email: 'billing@healthsphere.com',
     password: 'billing123',
-    user: { first_name: 'Sunita', last_name: 'Rao', role: 'FINANCE', department: 'Billing & Accounts', title: 'Finance Controller' },
+    user: { id: 'FIN-404', first_name: 'Sunita', last_name: 'Rao', role: 'FINANCE', department: 'Billing & Accounts', title: 'Finance Controller' },
     icon: CreditCard,
     color: '#4f46e5',
     bg: '#e0e7ff',
@@ -69,7 +69,7 @@ export const departments = [
     name: 'Ambulance & Emergency Dispatch',
     email: 'emergency@healthsphere.com',
     password: 'emergency123',
-    user: { first_name: 'Raju', last_name: 'Sharma', role: 'DISPATCHER', department: 'Emergency & Fleet', title: 'Fleet Controller' },
+    user: { id: 'DISP-505', first_name: 'Raju', last_name: 'Sharma', role: 'DISPATCHER', department: 'Emergency & Fleet', title: 'Fleet Controller' },
     icon: Truck,
     color: '#ea580c',
     bg: '#ffedd5',
@@ -81,7 +81,7 @@ export const departments = [
     name: 'Diagnostics & Radiology',
     email: 'lab@healthsphere.com',
     password: 'lab123',
-    user: { first_name: 'Amit', last_name: 'Shah', role: 'LAB_TECH', department: 'Diagnostics & ML', title: 'Lab Diagnostics Director' },
+    user: { id: 'LAB-606', first_name: 'Amit', last_name: 'Shah', role: 'LAB_TECH', department: 'Diagnostics & ML', title: 'Lab Diagnostics Director' },
     icon: Microscope,
     color: '#8b5cf6',
     bg: '#ede9fe',
@@ -112,7 +112,7 @@ export const Login = () => {
     setLoading(true);
     setTimeout(() => {
       login({
-        id: dept.id,
+        id: dept.user.id,
         email: dept.email,
         first_name: dept.user.first_name,
         last_name: dept.user.last_name,
@@ -129,7 +129,7 @@ export const Login = () => {
     setLoading(true);
     setTimeout(() => {
       login({
-        id: selectedDept.id,
+        id: selectedDept.user.id,
         email: email,
         first_name: selectedDept.user.first_name,
         last_name: selectedDept.user.last_name,
@@ -164,17 +164,17 @@ export const Login = () => {
             <span style={{ color: '#38bdf8' }}>Isolated Logins</span>
           </h2>
           <p style={{ color: '#bae6fd', lineHeight: 1.7, fontSize: '0.95rem', maxWidth: 440, marginBottom: '2rem' }}>
-            Each department login provides strict role isolation. Staff members see only their relevant department modules and patient data.
+            Role-Based Access Control (RBAC) active. Each staff login unlocks only features relevant to their department.
           </p>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', background: 'rgba(255,255,255,0.08)', padding: '0.75rem 1rem', borderRadius: 10, border: '1px solid rgba(255,255,255,0.12)' }}>
               <CheckCircle2 size={20} color="#38bdf8" />
-              <span style={{ fontSize: '0.875rem', fontWeight: 600 }}>7 Isolated Department Portals</span>
+              <span style={{ fontSize: '0.875rem', fontWeight: 600 }}>7 Strict Role-Isolated Portals</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', background: 'rgba(255,255,255,0.08)', padding: '0.75rem 1rem', borderRadius: 10, border: '1px solid rgba(255,255,255,0.12)' }}>
               <ShieldCheck size={20} color="#34d399" />
-              <span style={{ fontSize: '0.875rem', fontWeight: 600 }}>Unnecessary Views Auto-Restricted</span>
+              <span style={{ fontSize: '0.875rem', fontWeight: 600 }}>Unrelated Features Hidden Automatically</span>
             </div>
           </div>
         </div>

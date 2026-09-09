@@ -37,33 +37,39 @@ export const DashboardLayout: React.FC = () => {
 
   const userRole = user?.role || 'ADMIN';
 
-  // Allowed Paths per Role
-  const getAllowedPaths = (role: string) => {
+  // Strict Role-Based Feature Permissions
+  const getRoleAllowedPaths = (role: string) => {
     switch (role) {
       case 'ADMIN': 
         return allMenuItems.map(m => m.path);
       case 'DOCTOR': 
+        // Cardiology Doctor sees only Doctors, Patients, Appointments, EHR Records, Telemedicine, Vitals
         return ['/dashboard', '/dashboard/doctors', '/dashboard/patients', '/dashboard/appointments', '/dashboard/records', '/dashboard/telemedicine', '/dashboard/analytics'];
       case 'NURSE_ICU': 
+        // ICU Nurse sees only ICU Admissions, Patients, EHR Records, Vitals
         return ['/dashboard', '/dashboard/admissions', '/dashboard/patients', '/dashboard/records', '/dashboard/analytics'];
       case 'PHARMACIST': 
+        // Pharmacist sees ONLY Pharmacy Stock & Patients
         return ['/dashboard', '/dashboard/pharmacy', '/dashboard/patients'];
       case 'FINANCE': 
+        // Finance Controller sees ONLY Billing & Patients
         return ['/dashboard', '/dashboard/billing', '/dashboard/patients'];
       case 'DISPATCHER': 
+        // Ambulance Dispatcher sees ONLY Ambulance & Patients
         return ['/dashboard', '/dashboard/ambulance', '/dashboard/patients'];
       case 'LAB_TECH': 
+        // Lab Tech sees ONLY AI Telemetry, EHR Records, Patients
         return ['/dashboard', '/dashboard/analytics', '/dashboard/records', '/dashboard/patients'];
       default: 
         return ['/dashboard'];
     }
   };
 
-  const allowedPaths = getAllowedPaths(userRole);
+  const allowedPaths = getRoleAllowedPaths(userRole);
   const menuItems = allMenuItems.filter(item => allowedPaths.includes(item.path));
   const isCurrentPathAllowed = allowedPaths.includes(location.pathname);
 
-  const getRoleColor = (role: string) => {
+  const getRoleStyle = (role: string) => {
     switch (role) {
       case 'ADMIN': return { bg: '#e0f2fe', color: '#0284c7', label: 'Hospital Admin', home: '/dashboard' };
       case 'DOCTOR': return { bg: '#ccfbf1', color: '#0d9488', label: 'Cardiology Specialist', home: '/dashboard/doctors' };
@@ -76,7 +82,7 @@ export const DashboardLayout: React.FC = () => {
     }
   };
 
-  const roleStyle = getRoleColor(userRole);
+  const roleStyle = getRoleStyle(userRole);
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', width: '100%', background: '#f8fafc', fontFamily: 'Inter, system-ui, sans-serif' }}>
@@ -150,7 +156,7 @@ export const DashboardLayout: React.FC = () => {
           </div>
         )}
 
-        {/* Navigation Links (Role Scoped Only) */}
+        {/* Navigation Links (STRICTLY ROLE-SCOPED ONLY) */}
         <nav style={{ flex: 1, padding: '0.75rem 0.75rem', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 4 }}>
           {menuItems.map((item, idx) => {
             const isActive = location.pathname === item.path || (item.path !== '/dashboard' && location.pathname.startsWith(item.path));
@@ -256,7 +262,7 @@ export const DashboardLayout: React.FC = () => {
             <Search size={16} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
             <input 
               type="text"
-              placeholder="Search patients, doctors, records..."
+              placeholder="Search department records..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               style={{
@@ -294,7 +300,7 @@ export const DashboardLayout: React.FC = () => {
               </div>
               <div>
                 <div style={{ fontWeight: 800, fontSize: '0.875rem', color: '#0f172a', lineHeight: 1.2 }}>
-                  {user?.first_name ? `${user.first_name} ${user.last_name || ''}` : 'Administrator'}
+                  {user?.first_name ? `${user.first_name} ${user.last_name || ''}` : 'Hospital Staff'}
                 </div>
                 <div style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 600 }}>
                   {user?.title || userRole}
@@ -313,9 +319,9 @@ export const DashboardLayout: React.FC = () => {
               <div style={{ width: 64, height: 64, borderRadius: '50%', background: '#fee2e2', color: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.25rem' }}>
                 <Lock size={32} />
               </div>
-              <h2 style={{ fontSize: '1.5rem', fontWeight: 900, color: '#0f172a', marginBottom: '0.5rem' }}>Access Restricted</h2>
+              <h2 style={{ fontSize: '1.5rem', fontWeight: 900, color: '#0f172a', marginBottom: '0.5rem' }}>Department Access Restricted</h2>
               <p style={{ color: '#64748b', fontSize: '0.95rem', lineHeight: 1.6, marginBottom: '1.75rem' }}>
-                You are currently logged in under <strong>{user?.department || roleStyle.label}</strong>. Unnecessary modules are restricted to enforce HIPAA compliance.
+                You are currently logged in under <strong>{user?.department || roleStyle.label}</strong> ({userRole}). Access to this module is restricted to enforce HIPAA compliance and role security.
               </p>
               <button 
                 onClick={() => navigate(roleStyle.home)} 
